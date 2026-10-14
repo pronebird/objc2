@@ -98,6 +98,18 @@ impl<K: ?Sized, V: ?Sized> CFDictionary<K, V> {
         // are valid for these types).
         unsafe { CFRetained::cast_unchecked::<Self>(dictionary) }
     }
+
+    /// Create a new dictionary from slice of key/value pairs.
+    #[inline]
+    #[doc(alias = "CFDictionaryCreate")]
+    pub fn from_kv_pairs(pairs: &[(&K, &V)]) -> CFRetained<Self>
+    where
+        K: Type + PartialEq + Hash,
+        V: Type,
+    {
+        let (keys, vals): (Vec<&K>, Vec<&V>) = pairs.iter().copied().unzip();
+        Self::from_slices(&keys, &vals)
+    }
 }
 
 /// Convenience creation methods.
